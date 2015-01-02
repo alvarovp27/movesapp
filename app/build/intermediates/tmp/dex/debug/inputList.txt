@@ -1,0 +1,6 @@
+/Users/Manuel/AndroidStudioProjects/MovesApp1/app/build/intermediates/classes/debug
+/Users/Manuel/AndroidStudioProjects/MovesApp1/app/build/intermediates/pre-dexed/debug/support-annotations-21.0.3-26d1df0ed3608de80972e1d54b6b4b064f8476ee.jar
+/Users/Manuel/AndroidStudioProjects/MovesApp1/app/build/intermediates/pre-dexed/debug/gson-2.2.4-e6028366d8976a08341be41ce2767fb68bb9e3c3.jar
+/Users/Manuel/AndroidStudioProjects/MovesApp1/app/build/intermediates/pre-dexed/debug/internal_impl-21.0.3-57e359770572e332a6b545fc3d0bd5f492a28cf3.jar
+/Users/Manuel/AndroidStudioProjects/MovesApp1/app/build/intermediates/pre-dexed/debug/classes-1b33f97ee511355670270bfccf74b9067efae08a.jar
+/Users/Manuel/AndroidStudioProjects/MovesApp1/app/build/intermediates/pre-dexed/debug/classes-f7d306907f980b47068294b4f53a7c4676946818.jar
