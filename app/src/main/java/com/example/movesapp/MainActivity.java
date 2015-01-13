@@ -77,7 +77,7 @@ public class MainActivity extends ActionBarActivity {
         }
         Usuarios user = new Usuarios(this);
         //user.borrar();
-        //user.dropUsuarios();
+      //  user.dropUsuarios();
         
         if(user.checkCreada() == true){
         	Intent bbdd = new Intent(this, NuevoUsuario.class);
@@ -108,7 +108,7 @@ public class MainActivity extends ActionBarActivity {
      * {@link #onActivityResult(int, int, android.content.Intent) }
      *
      */
-    private void doRequestAuthInApp() {
+    public void doRequestAuthInApp() {
 
         Uri uri = createAuthUri("moves", "app", "/authorize").build();
         Intent intent = new Intent(Intent.ACTION_VIEW, uri);

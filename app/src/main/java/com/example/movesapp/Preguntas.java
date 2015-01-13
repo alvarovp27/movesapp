@@ -30,6 +30,7 @@ import android.widget.Toast;
 
 import com.example.movesclass.Places;
 import com.example.movesclass.Resultados;
+import com.example.movesclass.Usuarios;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -44,9 +45,11 @@ public class Preguntas extends ActionBarActivity {
 	private String access_token;
 	private String expires_in;
 	private static String str_respuesta;
+    public static int date ;
 	private static Date fecha;
 	private static Date inicio;
 	private static Date fin;
+    private static Calendar comienzoActual;
 	private static int contador = 1;
 	private int contadorAtras = 0;
 	private static int aleat=0,aseg=0,af1=0,af2=0,asegf1=0,asegf2=0,salir=0;
@@ -101,50 +104,68 @@ public class Preguntas extends ActionBarActivity {
 			}
             });
 		
-		
-		
-		HttpClient client = new DefaultHttpClient();
-		int date = 201406;
-		Boolean cent = true;
-		do{
-	        HttpGet request = new HttpGet("https://api.moves-app.com/api/1.1/user/places/daily/"+date+"?access_token="+access_token);
-	        HttpResponse respuesta;
-	        String recorre = "";
-			try {
-				respuesta = client.execute(request);
-		        recorre = EntityUtils.toString(respuesta.getEntity());
-		        
-		      //  str_respuesta = str_respuesta.substring(0, str_respuesta.length()-1)+","; 
-		     //   String cadenaNueva2 = r.substring(1, str_respuesta2.length());
-		      //  str_respuesta = "";
-		     //   str_respuesta = cadenaNueva + cadenaNueva2;
-		      //  Log.d("JSON",cadenaNueva);
-		      //  Log.d("JSON2",cadenaNueva2);
-			} catch (Exception e) {	
-				Toast.makeText(this, "Ocurrio un error llamando a la API: " + e.toString() , Toast.LENGTH_LONG).show();
-				//pregunta.setText(e.toString());
-			}
-			
-			String error = recorre.substring(2, 7);
-			Log.d("Cadena error", error);
-	        if(error.equals("error")  || recorre == ""){
-	        	cent = false;
-	        } else{
-	        	if(str_respuesta == "" || str_respuesta == null){
-	        		str_respuesta = recorre;
-	        	}else{
-	        		str_respuesta = str_respuesta.substring(0, str_respuesta.length()-1)+",";
-	        		String cadenaNueva2 = recorre.substring(1, recorre.length());
-	        		str_respuesta += cadenaNueva2;
-	        	}
-	        	date = date -1;
-	        }
-	        Log.d("Fecha",date+"");
-	        
-		}while(cent);
-		
+        Usuarios u = new Usuarios(this);
+        if(!u.checkDatos()){
+            str_respuesta = u.obtieneDatos();
+            Log.i("Datos","He entrado en CheckDatos");
+        }else {
+            HttpClient client = new DefaultHttpClient();
+            comienzoActual = new GregorianCalendar();
+            String dateAux1 = Integer.toString(comienzoActual.get(Calendar.YEAR));
+            String dateAux2 = Integer.toString(comienzoActual.get(Calendar.MONTH));
+            String mesConvertido = convierteMes(dateAux2);
+            String dateString = dateAux1+mesConvertido;
+
+            //Obtenemos la fecha Actual
+            date = Integer.parseInt(dateString);
+
+            Boolean cent = true;
+            int cont = 0;
+            do {
+                HttpGet request = new HttpGet("https://api.moves-app.com/api/1.1/user/places/daily/" + date + "?access_token=" + access_token);
+                HttpResponse respuesta;
+                String recorre = "";
+                try {
+                    respuesta = client.execute(request);
+                    recorre = EntityUtils.toString(respuesta.getEntity());
+
+                    //  str_respuesta = str_respuesta.substring(0, str_respuesta.length()-1)+",";
+                    //   String cadenaNueva2 = r.substring(1, str_respuesta2.length());
+                    //  str_respuesta = "";
+                    //   str_respuesta = cadenaNueva + cadenaNueva2;
+                    //  Log.d("JSON",cadenaNueva);
+                    //  Log.d("JSON2",cadenaNueva2);
+                } catch (Exception e) {
+                    Toast.makeText(this, "Ocurrio un error llamando a la API: " + e.toString(), Toast.LENGTH_LONG).show();
+                    //pregunta.setText(e.toString());
+                }
+
+                String error = recorre.substring(2, 7);
+                Log.d("Cadena error", error);
+                if (error.equals("error") || recorre == "" || cont == 5) { //Solamente cuenta 5 meses
+                    cent = false;
+                } else {
+                    if (str_respuesta == "" || str_respuesta == null) {
+                        str_respuesta = recorre;
+                    } else {
+                        str_respuesta = str_respuesta.substring(0, str_respuesta.length() - 1) + ",";
+                        String cadenaNueva2 = recorre.substring(1, recorre.length());
+                        str_respuesta += cadenaNueva2;
+                    }
+                    Log.e("text",str_respuesta);
+                    int auxfecha = restaFecha(date);
+                    date = auxfecha;
+                    Log.d("Fecha", Integer.toString(date));
+                    cont++;
+                }
+
+            } while (cent);
+            u.insertaDatos(str_respuesta);
+        }
+        Log.e("Datos",str_respuesta.toString());
 		try {
 			ejecutar(str_respuesta);
+
 		} catch (IOException e) {
 			
 			e.printStackTrace();
@@ -326,7 +347,7 @@ public class Preguntas extends ActionBarActivity {
 			try{
 			falso1=segments.get(af1).getSegments().get(asegf1).getPlace().getName();
 			}catch(Exception e){
-				Log.e("Falso1","nulo");
+				//Log.e("Falso1","nulo");
 			}
 			if(falso1 == null || falso1.isEmpty()){
 				Log.e("nullFalso1","nulo"); 
@@ -349,4 +370,55 @@ public class Preguntas extends ActionBarActivity {
 		}while(falso2.length()<2 || (falso2.equals(falso1) || falso2.equals(verdadero)));
 		
 	}
+    public int restaFecha(int fecha){
+        if(fecha%100 == 1) {
+            fecha = fecha - 89;
+        }else{
+            fecha--;
+        }
+        return fecha;
+    }
+    public String convierteMes(String mes){
+        String res = "";
+        switch (mes){
+            case "0":
+                res = "01";
+                break;
+            case "1":
+                res = "02";
+                break;
+            case "2":
+                res = "03";
+                break;
+            case "3":
+                res = "04";
+                break;
+            case "4":
+                res = "05";
+                break;
+            case "5":
+                res = "06";
+                break;
+            case "6":
+                res = "07";
+                break;
+            case "7":
+                res = "08";
+                break;
+            case "8":
+                res = "09";
+                break;
+            case "9":
+                res = "10";
+                break;
+            case "10":
+                res = "11";
+                break;
+            case "11":
+                res = "12";
+                break;
+
+        }
+        return res;
+    }
 }

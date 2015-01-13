@@ -46,6 +46,20 @@
 
             />
 
+        <Button
+            android:id="@+id/continueWithoutRefresh"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="Refrescar Datos"
+            android:background="@drawable/round_button"
+            android:textColor="@android:color/white"
+
+
+            android:layout_marginTop="31dp"
+            android:layout_below="@+id/authorizeInApp"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true" />
+
         <TextView
             android:id="@+id/textView1"
             android:layout_width="wrap_content"
