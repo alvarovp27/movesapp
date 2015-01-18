@@ -9,7 +9,6 @@ MDGarcia 2015
  ----- Proximos hitos -----
 * Servicio mejorado para enviar datos a servidor
 
-
 11/01/2015
 Ultimos cambios:
 * Cambiado tiempo de máximo a 6 meses
