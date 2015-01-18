@@ -10,9 +10,14 @@ import java.util.List;
 import java.util.Locale;
 
 import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 
 import android.annotation.SuppressLint;
@@ -56,6 +61,7 @@ public class Preguntas extends ActionBarActivity {
 	private static String verdadero = null,falso1 = null,falso2 = null;
 	private static List<Resultados> lista = new ArrayList<Resultados>();
 	private static ArrayList<Places> segments = new ArrayList<Places>();
+    private Boolean actualizar;
 	@Override
 	public void onBackPressed(){
 		contadorAtras++;
@@ -74,6 +80,7 @@ public class Preguntas extends ActionBarActivity {
 		final Context contexto = this;
 		access_token = getIntent().getStringExtra("accessToken");
 		expires_in = getIntent().getStringExtra("expires_in");
+        actualizar = getIntent().getBooleanExtra("update",false);
 		
 		pregunta = (TextView) findViewById(R.id.pregunta);
 		tituloPreguntas = (TextView) findViewById(R.id.tituloPreguntas);
@@ -92,6 +99,7 @@ public class Preguntas extends ActionBarActivity {
 					lista.clear();
 					Intent i = new Intent(contexto, Results.class);
 					i.putExtra("JSON", terminado);
+                    i.putExtra("Datos", str_respuesta);
 					startActivity(i);
 				}else{
 				
@@ -108,7 +116,7 @@ public class Preguntas extends ActionBarActivity {
         if(!u.checkDatos()){
             str_respuesta = u.obtieneDatos();
             Log.i("Datos","He entrado en CheckDatos");
-        }else {
+        }else if(u.checkDatos() || actualizar == true){
             HttpClient client = new DefaultHttpClient();
             comienzoActual = new GregorianCalendar();
             String dateAux1 = Integer.toString(comienzoActual.get(Calendar.YEAR));
@@ -160,6 +168,9 @@ public class Preguntas extends ActionBarActivity {
                 }
 
             } while (cent);
+
+            String usuario = u.obtieneUsuario();
+
             u.insertaDatos(str_respuesta);
         }
         Log.e("Datos",str_respuesta.toString());

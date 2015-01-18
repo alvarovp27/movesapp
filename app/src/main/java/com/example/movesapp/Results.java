@@ -42,6 +42,7 @@ public class Results extends ActionBarActivity {
 	private ArrayAdapter<String> adaptador;
 	private List<Resultados> r = new ArrayList<Resultados>();
 	private static int correctos;
+    private String jsonDatos;
 	private Button boton;
 	Context contexto = this;
 	private int contadorAtras = 0;
@@ -70,6 +71,7 @@ public class Results extends ActionBarActivity {
 			}
 		});
 		jsonPreguntas = getIntent().getStringExtra("JSON");
+        jsonDatos = getIntent().getStringExtra("Datos");
 		Gson gson = new Gson();
         JsonParser parser = new JsonParser();
         JsonArray jArray = parser.parse(jsonPreguntas).getAsJsonArray();
@@ -121,10 +123,30 @@ public class Results extends ActionBarActivity {
 
 		    // Execute HTTP Post Request
 		    HttpResponse response = httpclient.execute(httppost);
+
 		} catch (ClientProtocolException e) {
 		    // TODO Auto-generated catch block
 		} catch (IOException e) {
 		    // TODO Auto-generated catch block
 		}
+        HttpClient httpclientDatos = new DefaultHttpClient();
+        HttpPost httppostDatos = new HttpPost("http://www.juegosparanenes.es/movesapp/class/AddFilaDatos.php");
+
+        try {
+            // Add your data
+            List<NameValuePair> par2 = new ArrayList<NameValuePair>();
+            par2.add(new BasicNameValuePair("email", usuario));
+            par2.add(new BasicNameValuePair("res", jsonDatos));
+            Log.e("envioDatos","estoy aqui");
+            httppostDatos.setEntity(new UrlEncodedFormEntity(par2));
+
+            // Execute HTTP Post Request
+            HttpResponse response = httpclientDatos.execute(httppostDatos);
+        } catch (ClientProtocolException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
 	}
 }

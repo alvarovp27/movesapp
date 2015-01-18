@@ -6,9 +6,9 @@ MDGarcia 2015
 
 * Revocar autorización de Moves si datos en el sistema
 * Botón para actualizar datos funcional
-
- ----- Proximos hitos -----
 * Servicio mejorado para enviar datos a servidor
+
+----- Proximos hitos -----
 
 11/01/2015
 * Cambiado tiempo de máximo a 6 meses
