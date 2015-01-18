@@ -65,10 +65,11 @@ public class Usuarios extends SQLiteOpenHelper {
     public void insertaDatos(String json){
         SQLiteDatabase db = getWritableDatabase();
         Cursor cursor = db.rawQuery("SELECT * FROM Datos", null);
+        Log.e("Contador Cursor",Integer.toString(cursor.getCount()));
         if(cursor.getCount() > 0){
-            db.execSQL("DELETE * FROM Datos");
+            db.execSQL("DELETE FROM Datos");
         }
-        Log.e("InsertaDatos",json);
+        Log.e("InsertaDatos","Me dispongo a actualizar");
 
         db.execSQL("INSERT INTO Datos VALUES ('" + json + "')");
     }

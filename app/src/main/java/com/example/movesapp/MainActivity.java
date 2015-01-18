@@ -2,6 +2,7 @@ package com.example.movesapp;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.content.Context;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -50,7 +51,8 @@ public class MainActivity extends ActionBarActivity {
     private static final int REQUEST_AUTHORIZE = 1;
    
     private static String CODE="";
-    
+
+    private Context contexto = this;
     
 
     
@@ -63,9 +65,9 @@ public class MainActivity extends ActionBarActivity {
 		if(contadorAtras == 1) Toast.makeText(this, "Pulse de nuevo para cerrar la aplicación", Toast.LENGTH_LONG).show();
 		if(contadorAtras == 2){
 			contadorAtras =0;
-			Intent salida=new Intent( Intent.ACTION_MAIN); 
-			System.exit(0);
-		}
+            finish();
+
+        }
 	}
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -75,7 +77,7 @@ public class MainActivity extends ActionBarActivity {
             StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
             StrictMode.setThreadPolicy(policy);
         }
-        Usuarios user = new Usuarios(this);
+        final Usuarios user = new Usuarios(this);
         //user.borrar();
       //  user.dropUsuarios();
         
@@ -86,12 +88,26 @@ public class MainActivity extends ActionBarActivity {
             
         
         
-	        findViewById(R.id.authorizeInApp).setOnClickListener(new View.OnClickListener() {
+	        findViewById(R.id.continueWithoutRefresh).setOnClickListener(new View.OnClickListener() {
 	
 	            public void onClick(View v) {
 	                doRequestAuthInApp();
 	            }
 	        });
+            findViewById(R.id.authorizeInApp).setOnClickListener(new View.OnClickListener(){
+                public void onClick(View v) {
+                    Intent comenzar = new Intent(contexto, Preguntas.class);
+
+                    if(user.checkDatos() == true){
+                        comenzar.putExtra("update",true);
+                        doRequestAuthInApp();
+                    }else {
+                        comenzar.putExtra("update",false);
+                        startActivity(comenzar);
+                    }
+                }
+
+            });
 	
 	        mTextView = (TextView) findViewById(R.id.textView);
         }
@@ -159,6 +175,7 @@ public class MainActivity extends ActionBarActivity {
                        Intent i = new Intent(this,Preguntas.class);
                        i.putExtra("accessToken", json.getString("access_token"));
                        i.putExtra("expires_in", json.getString("expires_in"));
+                       i.putExtra("update",true);
                        startActivity(i);
                    }catch(Exception e){
                        Toast.makeText(this, "Ocurrio un error: " + e.toString() , Toast.LENGTH_LONG).show();

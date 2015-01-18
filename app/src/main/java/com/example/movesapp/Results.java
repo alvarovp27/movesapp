@@ -51,8 +51,7 @@ public class Results extends ActionBarActivity {
 		if(contadorAtras == 1) Toast.makeText(this, "Pulse de nuevo para cerrar la aplicación", Toast.LENGTH_LONG).show();
 		if(contadorAtras == 2){
 			contadorAtras =0;
-			Intent salida=new Intent( Intent.ACTION_MAIN); 
-			System.exit(0);
+            finish();
 		}
 	}
 	
@@ -64,7 +63,8 @@ public class Results extends ActionBarActivity {
 		boton = (Button) findViewById(R.id.botonIntento);
 		boton.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
-				Intent i = new Intent(contexto, MainActivity.class);
+				Intent i = new Intent(contexto, Preguntas.class);
+                i.putExtra("update",false);
 				startActivity(i);
 				
 			}
