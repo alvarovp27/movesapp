@@ -75,6 +75,7 @@ public class Results extends ActionBarActivity {
 		Gson gson = new Gson();
         JsonParser parser = new JsonParser();
         JsonArray jArray = parser.parse(jsonPreguntas).getAsJsonArray();
+        // Obtenemos el JSON con las respuestas, con las falsas y las verdades
         for(JsonElement obj : jArray )
         {
             Resultados cse = gson.fromJson( obj , Resultados.class);
@@ -82,7 +83,7 @@ public class Results extends ActionBarActivity {
         }
         
         int pregunta = 1;
-        
+        // Se insertan los datos en una lista
         for(Resultados ind : r){
         	String elemento = "\nPregunta "+pregunta+"\n" +
         			"Correcta: "+ind.getVerdadera()+"\n" +
@@ -115,7 +116,7 @@ public class Results extends ActionBarActivity {
 		HttpPost httppost = new HttpPost("http://www.juegosparanenes.es/movesapp/class/AddFila.php");
 
 		try {
-		    // Add your data
+		    
 		    List<NameValuePair> par = new ArrayList<NameValuePair>();
 		    par.add(new BasicNameValuePair("email", usuario));
 		    par.add(new BasicNameValuePair("res", resultados));

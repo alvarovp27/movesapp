@@ -35,7 +35,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.R.*;
 /**
- * Demonstrates app-to-app and browser-app-browser integration with Moves API authorize flow.
+ * Integración de la API oficial de Moves
  */
 @TargetApi(Build.VERSION_CODES.GINGERBREAD)
 @SuppressLint({ "ShowToast", "NewApi" })
@@ -73,14 +73,16 @@ public class MainActivity extends ActionBarActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
+        //Usado para poder enviar datos al servidor
         if (Build.VERSION.SDK_INT > 9) {
             StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
             StrictMode.setThreadPolicy(policy);
         }
+
+
         final Usuarios user = new Usuarios(this);
-        //user.borrar();
-      //  user.dropUsuarios();
-        
+
+        //Comprobar si un usuario está registrado ya, y no lo está, se llama a crear un nuevo usuario
         if(user.checkCreada() == true){
         	Intent bbdd = new Intent(this, NuevoUsuario.class);
         	startActivity(bbdd);
@@ -117,11 +119,7 @@ public class MainActivity extends ActionBarActivity {
     	MainActivity.CODE = code;
     }
     /**
-     * App-to-app. Creates an intent with data uri starting moves://app/authorize/xxx (for more
-     * details, see documentation link below) to be handled by Moves app. When Moves receives this
-     * Intent it opens up a dialog asking for user to accept the requested permission for your app.
-     * The result of this user interaction is delivered to 
-     * {@link #onActivityResult(int, int, android.content.Intent) }
+     * Funcion que realizar la llamada a la aplicación de Moves
      *
      */
     public void doRequestAuthInApp() {
@@ -138,8 +136,7 @@ public class MainActivity extends ActionBarActivity {
 
 
     /**
-     * Handle the result from Moves authorization flow. The result is delivered as an uri documented
-     * on the developer docs (see link below).
+     * Función posterior a la llamada de la API cuando se llama a la aplicación
      *
      */
     @SuppressLint("NewApi")
@@ -190,7 +187,7 @@ public class MainActivity extends ActionBarActivity {
     }
 
     /**
-     * Helper method for building a valid Moves authorize uri.
+     * Funcion para crear la URI para la API
      */
     private Uri.Builder createAuthUri(String scheme, String authority, String path) {
         return new Uri.Builder()
@@ -202,7 +199,10 @@ public class MainActivity extends ActionBarActivity {
                 .appendQueryParameter("scope", getSelectedScopes())
                 .appendQueryParameter("state", String.valueOf(SystemClock.uptimeMillis()));
     }
-   
+
+    /**
+     * Función para obtener el SCOPE de la llamada a la API
+     */
     private String getSelectedScopes() {
         StringBuilder sb = new StringBuilder();
         sb.append("activity");

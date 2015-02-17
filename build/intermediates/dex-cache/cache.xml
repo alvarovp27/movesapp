@@ -16,11 +16,32 @@
         <dex dex="/Users/Manuel/AndroidStudioProjects/MovesApp1/app/build/intermediates/pre-dexed/debug/gson-2.2.4-e6028366d8976a08341be41ce2767fb68bb9e3c3.jar" />
     </item>
     <item
+        jar="/Users/Manuel/AndroidStudioProjects/movesapp2/app/build/intermediates/exploded-aar/com.android.support/support-v4/21.0.3/classes.jar"
+        jumboMode="false"
+        revision="21.1.2"
+        sha1="2c91c949a45a21cdecf26e03951e46c7beec9ad8">
+        <dex dex="/Users/Manuel/AndroidStudioProjects/movesapp2/app/build/intermediates/pre-dexed/debug/classes-0f3617ffbafbaf151ffc7f20340aefa846ed8588.jar" />
+    </item>
+    <item
+        jar="/Users/Manuel/AndroidStudioProjects/movesapp2/app/build/intermediates/exploded-aar/com.android.support/support-v4/21.0.3/libs/internal_impl-21.0.3.jar"
+        jumboMode="false"
+        revision="21.1.2"
+        sha1="01ec05bfbafcc07646ba813000bf2ef11742dd03">
+        <dex dex="/Users/Manuel/AndroidStudioProjects/movesapp2/app/build/intermediates/pre-dexed/debug/internal_impl-21.0.3-6177fbbc868f4c9283a1871139c87f55c0d9bedd.jar" />
+    </item>
+    <item
         jar="/Users/Manuel/AndroidStudioProjects/MovesApp1/app/build/intermediates/exploded-aar/com.android.support/support-v4/21.0.3/classes.jar"
         jumboMode="false"
         revision="21.1.2"
         sha1="2c91c949a45a21cdecf26e03951e46c7beec9ad8">
         <dex dex="/Users/Manuel/AndroidStudioProjects/MovesApp1/app/build/intermediates/pre-dexed/debug/classes-f7d306907f980b47068294b4f53a7c4676946818.jar" />
+    </item>
+    <item
+        jar="/Users/Manuel/AndroidStudioProjects/movesapp2/app/build/intermediates/exploded-aar/com.android.support/appcompat-v7/21.0.3/classes.jar"
+        jumboMode="false"
+        revision="21.1.2"
+        sha1="81d42bf983a8741f4888a6e333e454e4a5e0eeb7">
+        <dex dex="/Users/Manuel/AndroidStudioProjects/movesapp2/app/build/intermediates/pre-dexed/debug/classes-cbe05c9e5fbfda9e57858132f231596c8769b21c.jar" />
     </item>
     <item
         jar="/Users/Manuel/AndroidStudioProjects/MovesApp1/app/build/intermediates/exploded-aar/com.android.support/support-v4/21.0.3/libs/internal_impl-21.0.3.jar"

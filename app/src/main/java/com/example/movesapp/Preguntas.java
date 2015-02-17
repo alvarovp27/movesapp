@@ -113,10 +113,11 @@ public class Preguntas extends ActionBarActivity {
             });
 		
         Usuarios u = new Usuarios(this);
+        //Los datos se guardan en la Base de Datos. Si existen datos en la base de datos, se obtienen, sino...
         if(!u.checkDatos()){
             str_respuesta = u.obtieneDatos();
             Log.i("Datos","He entrado en CheckDatos");
-        }else if(u.checkDatos() || actualizar == true){
+        }else if(u.checkDatos() || actualizar == true){             //... Si hay datos y el botón de actualizar ha sido pulsado, entonces los datos se obtienen de la API
             HttpClient client = new DefaultHttpClient();
             comienzoActual = new GregorianCalendar();
             String dateAux1 = Integer.toString(comienzoActual.get(Calendar.YEAR));
@@ -129,6 +130,8 @@ public class Preguntas extends ActionBarActivity {
 
             Boolean cent = true;
             int cont = 0;
+
+            //Se obtienen los datos de los ultimos 6 meses
             do {
                 HttpGet request = new HttpGet("https://api.moves-app.com/api/1.1/user/places/daily/" + date + "?access_token=" + access_token);
                 HttpResponse respuesta;
@@ -185,6 +188,10 @@ public class Preguntas extends ActionBarActivity {
 
 		
 	}
+
+    /**
+     * Funcion que proporciona las preguntas y las respuestas para que sean contestadas.
+     * */
 	@SuppressLint("ShowToast")
 	public void ejecutar(String respuesta) throws IOException{
 		tituloPreguntas.setText("Pregunta "+ contador +" de 10");
@@ -209,7 +216,7 @@ public class Preguntas extends ActionBarActivity {
 
 		
 		try{
-	
+	        //fecha de la pregunta, la hora de inicio y la hora de final
 			fecha = new SimpleDateFormat("yyyyMMdd",Locale.FRANCE).parse( segments.get(aleat).getDate());
 			inicio = new SimpleDateFormat("yyyyMMdd'T'HHmmssZ",Locale.FRANCE).parse( segments.get(aleat).getSegments().get(aseg).getStartTime());
 			fin = new SimpleDateFormat("yyyyMMdd'T'HHmmssZ",Locale.FRANCE).parse( segments.get(aleat).getSegments().get(aseg).getEndTime());
@@ -218,41 +225,40 @@ public class Preguntas extends ActionBarActivity {
 			pregunta.setText(e.toString());
 		}
 		
-		Toast.makeText(this, ffecha.format(fecha) + " "+ fHora.format(inicio), Toast.LENGTH_LONG);
+		//Toast.makeText(this, ffecha.format(fecha) + " "+ fHora.format(inicio), Toast.LENGTH_LONG);
 		pregunta.setText("¿Dónde estuvo el día "+ffecha.format(fecha)+" "+getDiaSemana(fecha)+"\n desde las "+fHora.format(inicio)+" hasta las "+fHora.format(fin)+"?");
 		
-		
-		//validar primero verdadero
-			
+
 		int preguntas = (int)Math.round(Math.random()*3);
 		int verdadera = 0;
+        //Se pone la pregunta verdadera en un lugar diferente
 		switch(preguntas){
-		case 0:
-			r1.setText(verdadero);
-			r2.setText(falso1);
-			r3.setText(falso2);
-			verdadera = 1;
-			break;
-		case 1:
-			r1.setText(falso1);
-			r2.setText(verdadero);
-			r3.setText(falso2);
-			verdadera = 2;
-			break;
-		case 2:
-			r1.setText(falso2);
-			r2.setText(falso1);
-			r3.setText(verdadero);
-			verdadera = 3;
-			break;
-		case 3:
-			r1.setText(verdadero);
-			r2.setText(falso1);
-			r3.setText(falso2);
-			verdadera = 1;
-			break;
+            case 0:
+                r1.setText(verdadero);
+                r2.setText(falso1);
+                r3.setText(falso2);
+                verdadera = 1;
+                break;
+            case 1:
+                r1.setText(falso1);
+                r2.setText(verdadero);
+                r3.setText(falso2);
+                verdadera = 2;
+                break;
+            case 2:
+                r1.setText(falso2);
+                r2.setText(falso1);
+                r3.setText(verdadero);
+                verdadera = 3;
+                break;
+            case 3:
+                r1.setText(verdadero);
+                r2.setText(falso1);
+                r3.setText(falso2);
+                verdadera = 1;
+                break;
 		}
-
+        // Se inserta en una lista la pregunta con la respuesta contestada
 		if(r1.isChecked()){
 			Resultados res = new Resultados(r1.getText().toString(),verdadero);
 			lista.add(res);
@@ -334,6 +340,11 @@ public class Preguntas extends ActionBarActivity {
 		}
 		return dia;
 	}
+
+    /**
+     * Función con la que obtenemos los lugares de la API de Moves
+     * */
+
 	public void getLugares(){
 		
 		do{
@@ -389,6 +400,10 @@ public class Preguntas extends ActionBarActivity {
         }
         return fecha;
     }
+
+    /**
+     * Función para convertir un mes en dato numérico tal y como lo realizar Moves. P.e. Enero = 01
+     * */
     public String convierteMes(String mes){
         String res = "";
         switch (mes){
