@@ -93,6 +93,7 @@ public class Preguntas extends ActionBarActivity {
 			public void onClick(View arg0) {
 				contador++;
 				if(contador > 10){
+					compruebaChecked();
 					contador = 1;
 					String terminado = "";
 					terminado = new Gson().toJson(lista);
@@ -104,6 +105,7 @@ public class Preguntas extends ActionBarActivity {
 				}else{
 				
 					try {
+						compruebaChecked();
 						ejecutar(str_respuesta);
 					} catch (IOException e) {
 						e.printStackTrace();
@@ -194,7 +196,7 @@ public class Preguntas extends ActionBarActivity {
      * */
 	@SuppressLint("ShowToast")
 	public void ejecutar(String respuesta) throws IOException{
-		tituloPreguntas.setText("Pregunta "+ contador +" de 10");
+		tituloPreguntas.setText("Pregunta " + contador + " de 10");
         Gson gson = new Gson();
         JsonParser parser = new JsonParser();
         JsonArray jArray = parser.parse(respuesta).getAsJsonArray();
@@ -258,7 +260,12 @@ public class Preguntas extends ActionBarActivity {
                 verdadera = 1;
                 break;
 		}
-        // Se inserta en una lista la pregunta con la respuesta contestada
+
+		
+	}
+
+	public void compruebaChecked(){
+		// Se inserta en una lista la pregunta con la respuesta contestada
 		if(r1.isChecked()){
 			Resultados res = new Resultados(r1.getText().toString(),verdadero);
 			lista.add(res);
@@ -271,7 +278,6 @@ public class Preguntas extends ActionBarActivity {
 			Resultados res = new Resultados(r3.getText().toString(),verdadero);
 			lista.add(res);
 		}
-		
 	}
 	
 	public int aleatorio(int tipo,ArrayList<Places> segmentos,int seleccionado, int anterior){
