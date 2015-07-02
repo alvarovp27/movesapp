@@ -41,7 +41,7 @@ public class Results extends ActionBarActivity {
 	private ArrayList<String> datos = new ArrayList<String>();
 	private ArrayAdapter<String> adaptador;
 	private List<Resultados> r = new ArrayList<Resultados>();
-	private static int correctos;
+	//private static int correctos;
     private String jsonDatos;
 	private Button boton;
 	Context contexto = this;
@@ -83,6 +83,7 @@ public class Results extends ActionBarActivity {
         }
         
         int pregunta = 1;
+		int correctos = 0;//Almacena el número de preguntas contestadas correctamente.
         // Se insertan los datos en una lista
         for(Resultados ind : r){
         	String elemento = "\nPregunta "+pregunta+"\n" +
