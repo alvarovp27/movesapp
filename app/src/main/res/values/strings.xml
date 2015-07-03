@@ -4,5 +4,6 @@
     <string name="app_name">MovesApp</string>
     <string name="action_settings">Opciones</string>
     <string name="hello_world">Hello world!</string>
+    <string name="title_activity_insta_result">InstaResult</string>
 
 </resources>

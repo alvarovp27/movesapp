@@ -164,6 +164,7 @@
     <string name="action_settings">Opciones</string>
     <string name="app_name">MovesApp</string>
     <string name="hello_world">Hello world!</string>
+    <string name="title_activity_insta_result">InstaResult</string>
     <!-- From: file:/C:/Users/Alvaro/Android_WS/movesapp/app/src/main/res/values/styles.xml -->
     <eat-comment/>
     <style name="AppTheme" parent="@style/Theme.AppCompat.Light.DarkActionBar">

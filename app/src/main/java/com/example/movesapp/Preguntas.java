@@ -104,12 +104,18 @@ public class Preguntas extends ActionBarActivity {
 					startActivity(i);
 				}else{
 				
-					try {
+					//try {
 						compruebaChecked();
-						ejecutar(str_respuesta);
-					} catch (IOException e) {
+						//String respHastaElMomento=new Gson().toJson(lista);
+
+						Intent i = new Intent(contexto, InstaResult.class);
+						//i.putExtra("JSON","hola");
+						//startActivity(i);
+
+						//ejecutar(str_respuesta);
+					/*} catch (IOException e) {
 						e.printStackTrace();
-					}
+					}*/
 				}
 			}
             });
