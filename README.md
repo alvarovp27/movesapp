@@ -1,11 +1,11 @@
 # MovesApp Programación
 Cambios hechos por Álvaro Valencia (alvarovp27 en Git)
 * Solucionado el error que no permitía chequear bien las respuestas correctas.
+* Solucionado el error que no contaba bien las preguntas acertadas.
+* Haccer que muestre los fallos y aciertos sobre la marcha.
 
 Próximos cambios:
-
-* Solucionar el error que no lleva bien la cuenta de preguntas acertadas
-* Hacer que muestre los fallos y aciertos sobre la marcha
+* Hacer que muestre los fallos y aciertos sobre la marcha (MEJORAR)
 * Mejorar el criterio de aleatoriedad de las preguntas:
     * Que las vaya mostrando de más cercanas en el tiempo a más lejanas.
 * Añadir un nuevo tipo de preguntas: Que pregunte al usuario cuándo fue la última vez que estuvo en un determinado lugar.
