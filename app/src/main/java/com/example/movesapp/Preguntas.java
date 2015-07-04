@@ -105,12 +105,14 @@ public class Preguntas extends ActionBarActivity {
 				}else{
 				
 					//try {
-						compruebaChecked();
-						//String respHastaElMomento=new Gson().toJson(lista);
+					compruebaChecked();
+					String respHastaElMomento=new Gson().toJson(lista);
 
-						Intent i = new Intent(contexto, InstaResult.class);
-						//i.putExtra("JSON","hola");
-						//startActivity(i);
+					Intent i = new Intent(contexto, InstaResult.class);
+					i.putExtra("JSON", respHastaElMomento);
+					//i.putExtra("Datos", str_respuesta);
+					//i.putExtra("JSON","hola");
+					startActivity(i);
 
 						//ejecutar(str_respuesta);
 					/*} catch (IOException e) {

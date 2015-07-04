@@ -41,10 +41,8 @@
         <activity
             android:name=".NuevoUsuario"
             android:theme="@style/AppTheme" />
-        <activity
-            android:name=".InstaResult"
-            android:label="@string/title_activity_insta_result" >
-        </activity>
+        <activity android:name=".InstaResult"
+            android:theme="@style/AppTheme" />
     </application>
 
 </manifest>

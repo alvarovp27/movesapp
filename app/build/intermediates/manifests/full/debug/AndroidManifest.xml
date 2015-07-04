@@ -43,8 +43,7 @@
             android:theme="@style/AppTheme" />
         <activity
             android:name="com.example.movesapp.InstaResult"
-            android:label="@string/title_activity_insta_result" >
-        </activity>
+            android:theme="@style/AppTheme" />
     </application>
 
 </manifest>
