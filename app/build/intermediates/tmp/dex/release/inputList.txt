@@ -1,0 +1,6 @@
+C:\Users\Alvaro\Android_WS\movesapp\app\build\intermediates\classes\release
+C:\Users\Alvaro\Android_WS\movesapp\app\build\intermediates\pre-dexed\release\support-annotations-21.0.3-7da2700e47e38a2b01529d40ad5e5494aca8e7fe.jar
+C:\Users\Alvaro\Android_WS\movesapp\app\build\intermediates\pre-dexed\release\gson-2.2.4-10aca6a2968b64ca7fb1fc2796351d0ca78c1e2b.jar
+C:\Users\Alvaro\Android_WS\movesapp\app\build\intermediates\pre-dexed\release\internal_impl-21.0.3-53d607b38cd4550b0c8eb78047e0bab4817a4aa8.jar
+C:\Users\Alvaro\Android_WS\movesapp\app\build\intermediates\pre-dexed\release\classes-cc2dde3db972fb218751c2271aed2bd54f728136.jar
+C:\Users\Alvaro\Android_WS\movesapp\app\build\intermediates\pre-dexed\release\classes-f066199e5e2b52306f472a2ec9308fefb145610e.jar

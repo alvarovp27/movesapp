@@ -2,13 +2,6 @@
 <items version="2" >
 
     <item
-        jar="C:\Users\Alvaro\.gradle\caches\modules-2\files-2.1\com.google.code.gson\gson\2.2.4\a60a5e993c98c864010053cb901b7eab25306568\gson-2.2.4.jar"
-        jumboMode="false"
-        revision="21.1.2"
-        sha1="a60a5e993c98c864010053cb901b7eab25306568">
-        <dex dex="C:\Users\Alvaro\Android_WS\movesapp\app\build\intermediates\pre-dexed\debug\gson-2.2.4-10aca6a2968b64ca7fb1fc2796351d0ca78c1e2b.jar" />
-    </item>
-    <item
         jar="C:\Users\Alvaro\AppData\Local\Android\sdk\extras\android\m2repository\com\android\support\support-annotations\21.0.3\support-annotations-21.0.3.jar"
         jumboMode="false"
         revision="21.1.2"
@@ -21,6 +14,13 @@
         revision="21.1.2"
         sha1="01ec05bfbafcc07646ba813000bf2ef11742dd03">
         <dex dex="C:\Users\Alvaro\Android_WS\movesapp\app\build\intermediates\pre-dexed\debug\internal_impl-21.0.3-53d607b38cd4550b0c8eb78047e0bab4817a4aa8.jar" />
+    </item>
+    <item
+        jar="C:\Users\Alvaro\.gradle\caches\modules-2\files-2.1\com.google.code.gson\gson\2.2.4\a60a5e993c98c864010053cb901b7eab25306568\gson-2.2.4.jar"
+        jumboMode="false"
+        revision="21.1.2"
+        sha1="a60a5e993c98c864010053cb901b7eab25306568">
+        <dex dex="C:\Users\Alvaro\Android_WS\movesapp\app\build\intermediates\pre-dexed\debug\gson-2.2.4-10aca6a2968b64ca7fb1fc2796351d0ca78c1e2b.jar" />
     </item>
     <item
         jar="C:\Users\Alvaro\Android_WS\movesapp\app\build\intermediates\exploded-aar\com.android.support\support-v4\21.0.3\classes.jar"

@@ -77,10 +77,13 @@ public class InstaResult extends ActionBarActivity {
 
 		Resultados ultimo = gson.fromJson(jArray.get(jArray.size()-1),Resultados.class);
 
-		if(ultimo.getContestado().equals(ultimo.getVerdadera()))
-			texto.setText("BIEN");
-		else
-			texto.setText("MAL");
+		if(ultimo.getContestado().equals(ultimo.getVerdadera())){
+			texto.setText("¡Correcto!");
+		}else{
+			texto.setText("¡Incorrecto! La respuesta correcta era: \n"+
+			ultimo.getVerdadera());
+		}
+
 
 
 		boton.setOnClickListener(new View.OnClickListener() {
