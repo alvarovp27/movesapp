@@ -1,13 +1,18 @@
 package com.example.movesapp;
 
 import java.io.IOException;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -35,6 +40,7 @@ import android.widget.Toast;
 
 import com.example.movesclass.Places;
 import com.example.movesclass.Resultados;
+import com.example.movesclass.Segments;
 import com.example.movesclass.Usuarios;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -62,6 +68,10 @@ public class Preguntas extends ActionBarActivity {
 	private static List<Resultados> lista = new ArrayList<Resultados>();
 	private static ArrayList<Places> segments = new ArrayList<Places>();
     private Boolean actualizar;
+
+	private static List<Segments> preguntasAMostrar = new ArrayList<>();
+	private static int punteroAPregunta=0;
+
 	@Override
 	public void onBackPressed(){
 		contadorAtras++;
@@ -95,6 +105,10 @@ public class Preguntas extends ActionBarActivity {
 				if(contador > 10){
 					compruebaChecked();
 					contador = 1;
+
+					punteroAPregunta=0;
+					preguntasAMostrar=new ArrayList<Segments>();
+
 					String terminado = "";
 					terminado = new Gson().toJson(lista);
 					lista.clear();
@@ -221,23 +235,39 @@ public class Preguntas extends ActionBarActivity {
 
 		
 		//Obtenemos los lugares
-		getLugares();
-		
 
-		
-		try{
-	        //fecha de la pregunta, la hora de inicio y la hora de final
-			fecha = new SimpleDateFormat("yyyyMMdd",Locale.FRANCE).parse( segments.get(aleat).getDate());
-			inicio = new SimpleDateFormat("yyyyMMdd'T'HHmmssZ",Locale.FRANCE).parse( segments.get(aleat).getSegments().get(aseg).getStartTime());
-			fin = new SimpleDateFormat("yyyyMMdd'T'HHmmssZ",Locale.FRANCE).parse( segments.get(aleat).getSegments().get(aseg).getEndTime());
-		}catch(Exception e){
-			Log.e("Fecha","Ocurrio un error con la fecha");
-			pregunta.setText(e.toString());
+		if(preguntasAMostrar.isEmpty()){
+            cargaPreguntas();
+            System.out.println("Acabo de cargar las preguntas");
+        }else{
+            System.out.println("¡Paso de cargar preguntas!");
+        }
+
+
+
+
+		Segments actual = preguntasAMostrar.get(punteroAPregunta);
+        punteroAPregunta++;
+
+		Date fechaInicio = new Date();
+		Date fechaFin = new Date();
+
+		try {
+			fechaInicio = new SimpleDateFormat("yyyyMMdd'T'HHmmssZ",Locale.FRANCE).parse(actual.getStartTime());
+			fechaFin = new SimpleDateFormat("yyyyMMdd'T'HHmmssZ",Locale.FRANCE).parse(actual.getEndTime());
+		} catch (ParseException e) {
+			e.printStackTrace();
 		}
-		
-		//Toast.makeText(this, ffecha.format(fecha) + " "+ fHora.format(inicio), Toast.LENGTH_LONG);
-		pregunta.setText("¿Dónde estuvo el día "+ffecha.format(fecha)+" "+getDiaSemana(fecha)+"\n desde las "+fHora.format(inicio)+" hasta las "+fHora.format(fin)+"?");
-		
+
+		pregunta.setText("¿Dónde estuvo el día "+fechaInicio.toString()+" de "+fechaInicio.toString()+" hasta "+fechaFin.toString()+"?");
+		verdadero=actual.getPlace().getName();
+
+        System.out.println("Voy a obtener los falsos:");
+		List<String> falsos = dameFalsos(actual);
+        System.out.println("Terminé de obtener los falsos!!");
+
+		falso1=falsos.get(0);
+		falso2=falsos.get(1);
 
 		int preguntas = (int)Math.round(Math.random()*3);
 		int verdadera = 0;
@@ -295,14 +325,15 @@ public class Preguntas extends ActionBarActivity {
 		
 				i = (int)Math.round(Math.random()*(segmentos.size()-1));
 				if(i < 0) i = 0;
-		
+		        if(i>=segmentos.size()) i = segmentos.size()-1;
 			break;
 			
 		case 1: //fechas de la pregunta
 				if(segmentos.get(seleccionado).getSegments() != null){
 					i = (int)Math.round(Math.random()*(segmentos.get(seleccionado).getSegments().size()-1));
 					if(i < 0) i = 0;
-			
+			        if(i>segmentos.get(seleccionado).getSegments().size())
+                        i = segmentos.get(seleccionado).getSegments().size()-1;
 				}
 			break;
 		
@@ -353,6 +384,136 @@ public class Preguntas extends ActionBarActivity {
 		
 		}
 		return dia;
+	}
+
+
+	public void cargaPreguntas(){
+        preguntasAMostrar = new ArrayList<>();
+		Map<String,Integer> contadorApariciones = new HashMap<>();
+
+        boolean sigue = false;
+		Integer randomDay;
+		Integer randomSegment;
+
+		for(int i = 0;i<10;i++){
+
+            /*System.out.println("Tamaño segments: "+segments.size());
+            System.out.println("Índice al que apunta: "+randomDay);
+            System.out.println("Tamaño listta de segmentos del día: "+segments.get(randomDay).getSegments().size());
+            System.out.println("Índice al que apunta: "+randomSegment);*/
+            Segments actual = null;
+            do{
+
+                while(actual==null || sigue){
+                    try{
+                        randomDay=aleatorio(0,segments,0,0);
+                        randomSegment=aleatorio(1,segments,randomDay,0);
+                        actual = segments.get(randomDay).getSegments().get(randomSegment);
+                        System.out.println("*************************"+actual.getPlace().getName());
+                        sigue=actual.getPlace().getName()==null;
+                    }catch(Exception e){
+                        e.getStackTrace();
+                    }
+                }
+                if(!contadorApariciones.containsKey(actual.getPlace().getName()))
+                    contadorApariciones.put(actual.getPlace().getName(),0);
+
+            sigue = preguntasAMostrar.contains(actual) || contadorApariciones.get(actual.getPlace().getName())>=3
+            || actual.getPlace().getName().length()<2;
+            }while(sigue);
+
+			preguntasAMostrar.add(actual);
+			if(!contadorApariciones.containsKey(actual.getPlace().getName()))
+				contadorApariciones.put(actual.getPlace().getName(),0);
+			else
+				contadorApariciones.put(actual.getPlace().getName(),contadorApariciones.get(actual.getPlace().getName())+1);
+		}
+
+		//Ordeno la lista de preguntas a mostrar de más recientes a más lejanas en el tiempo
+
+		Collections.sort(preguntasAMostrar,new comparadorPreguntas());
+	}
+
+	private class comparadorPreguntas implements Comparator<Segments>{
+		@Override
+		public int compare(Segments s1, Segments s2) {
+			Date fechaS1 = null;
+			Date fechaS2 = null;
+			try {
+				fechaS1 = new SimpleDateFormat("yyyyMMdd'T'HHmmssZ",Locale.FRANCE).parse(s1.getStartTime());
+				fechaS2 = new SimpleDateFormat("yyyyMMdd'T'HHmmssZ",Locale.FRANCE).parse(s2.getStartTime());
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
+
+			if(fechaS1 == null || fechaS2 == null)
+				return 0;
+			else
+				return fechaS2.compareTo(fechaS1);
+		}
+	}
+
+	/**
+	 * Calcula las opciones falsas teniendo en cuenta la opción verdadera.
+	 * */
+	public List<String> dameFalsos(Segments segmento){
+		List<String> res = new ArrayList<>();
+
+        boolean sigue = true;
+		Integer randomDayFalse;
+		Integer randomSegmentFalse;
+
+		Segments escogido1=null;
+
+		do{
+            while(escogido1==null || sigue){
+                System.out.println("dentro bucle 1");
+                //sigue = false;
+                try{
+                    randomDayFalse=aleatorio(0,segments,0,0);
+                    randomSegmentFalse = aleatorio(1, segments, randomDayFalse, 0);
+                    escogido1 = segments.get(randomDayFalse).getSegments().get(randomSegmentFalse);
+                    System.out.println("Estoy eligiendo falso 1..."+escogido1.getPlace().getName());
+					sigue=escogido1.getPlace().getName()==null;
+                }catch(Exception e){
+                    e.getStackTrace();
+                }
+            }
+            String verdadero=segmento.getPlace().getName();
+            String falso1 = escogido1.getPlace().getName();
+            sigue = falso1.equals(verdadero) || falso1.length()<2;
+		}while(sigue);
+
+		res.add(escogido1.getPlace().getName());
+
+		Segments escogido2 = null;
+
+		do{
+            while(escogido2==null || sigue){
+                System.out.println("dentro bucle 2");
+                //sigue = false;
+                try{
+                    randomDayFalse=aleatorio(0,segments,0,0);
+                    randomSegmentFalse = aleatorio(1, segments, randomDayFalse, 0);
+                    escogido2 = segments.get(randomDayFalse).getSegments().get(randomSegmentFalse);
+                    System.out.println("Estoy eligiendo falso 2..."+escogido2.getPlace().getName());
+					sigue=escogido2.getPlace().getName()==null;
+					System.out.println("sigue falso2: "+sigue);
+                } catch(Exception e){
+                    e.getStackTrace();
+                }
+            }
+
+            String verdadero =segmento.getPlace().getName();
+            String falso2 = escogido2.getPlace().getName();
+
+            sigue = falso2.equals(verdadero)
+                    || res.contains(falso2) || falso2.length()<2;
+		}while(sigue);
+
+		res.add(escogido2.getPlace().getName());
+
+		return res;
 	}
 
     /**
