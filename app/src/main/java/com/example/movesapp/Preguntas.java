@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Random;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -42,12 +43,15 @@ import com.example.movesclass.Places;
 import com.example.movesclass.Resultados;
 import com.example.movesclass.Segments;
 import com.example.movesclass.Usuarios;
+import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import android.support.v7.app.ActionBarActivity;
+
+import static java.util.Random.*;
 
 public class Preguntas extends ActionBarActivity {
 	private TextView pregunta;
@@ -318,7 +322,7 @@ public class Preguntas extends ActionBarActivity {
 			lista.add(res);
 		}
 	}
-	
+
 	public int aleatorio(int tipo,ArrayList<Places> segmentos,int seleccionado, int anterior){
 		int i = 0;
 		switch(tipo){
@@ -355,6 +359,11 @@ public class Preguntas extends ActionBarActivity {
 		
 		return i;
 	}
+
+	public int aleatorio2(int limSup){
+		Random r = new Random();
+		return r.nextInt(limSup+1);
+	}
 	
 	public static String getDiaSemana(Date d){
 		GregorianCalendar cal = new GregorianCalendar();
@@ -389,7 +398,27 @@ public class Preguntas extends ActionBarActivity {
 
 
 	public void cargaPreguntas(){
-        preguntasAMostrar = new ArrayList<>();
+		Iterable<List<Segments>> aux = Iterables.transform(segments, new Function<Places, List<Segments>>() {
+			@Override
+			public List<Segments> apply(Places places) {
+				return places.getSegments();
+			}
+		});
+
+		List<Segments> segments2 = new ArrayList<>();
+		for(List<Segments> ls : aux){
+			try{
+				for(Segments s:ls){
+					if(s.getPlace().getName()!=null)
+						segments2.add(s);
+				}
+			} catch(Exception e){
+				e.getStackTrace();
+			}
+		}
+		System.out.println("Tamaño de la lista de segmentos: ******** "+segments2.size());
+
+		preguntasAMostrar = new ArrayList<>();
 		Map<String,Integer> contadorApariciones = new HashMap<>();
 
         boolean sigue = false;
@@ -397,12 +426,11 @@ public class Preguntas extends ActionBarActivity {
 		Integer randomSegment;
 
 		for(int i = 0;i<10;i++){
-
             /*System.out.println("Tamaño segments: "+segments.size());
             System.out.println("Índice al que apunta: "+randomDay);
             System.out.println("Tamaño listta de segmentos del día: "+segments.get(randomDay).getSegments().size());
             System.out.println("Índice al que apunta: "+randomSegment);*/
-            Segments actual = null;
+            /*Segments actual = null;
             do{
 
                 while(actual==null || sigue){
@@ -421,7 +449,17 @@ public class Preguntas extends ActionBarActivity {
 
             sigue = preguntasAMostrar.contains(actual) || contadorApariciones.get(actual.getPlace().getName())>=3
             || actual.getPlace().getName().length()<2;
-            }while(sigue);
+            }while(sigue);*/
+
+			Segments actual = null;
+			do {
+				randomDay=aleatorio2(segments2.size()-1);
+				System.out.println("Número aleatorio obtenido: "+randomDay);
+				actual = segments2.get(randomDay);
+				if(!contadorApariciones.containsKey(actual.getPlace().getName()))
+					contadorApariciones.put(actual.getPlace().getName(),0);
+			}while(contadorApariciones.get(actual.getPlace().getName())>3 || actual.getPlace().getName().length()<2
+					|| preguntasAMostrar.contains(actual));
 
 			preguntasAMostrar.add(actual);
 			if(!contadorApariciones.containsKey(actual.getPlace().getName()))
@@ -465,7 +503,7 @@ public class Preguntas extends ActionBarActivity {
 		Integer randomSegmentFalse;
 
 		Segments escogido1=null;
-		
+
 		do{
             while(escogido1==null || sigue){
                 System.out.println("dentro bucle 1");
