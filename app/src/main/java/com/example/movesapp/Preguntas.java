@@ -465,7 +465,7 @@ public class Preguntas extends ActionBarActivity {
 		Integer randomSegmentFalse;
 
 		Segments escogido1=null;
-		Iterables.all(segments,null);
+		
 		do{
             while(escogido1==null || sigue){
                 System.out.println("dentro bucle 1");
