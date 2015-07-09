@@ -42,6 +42,7 @@ import com.example.movesclass.Places;
 import com.example.movesclass.Resultados;
 import com.example.movesclass.Segments;
 import com.example.movesclass.Usuarios;
+import com.google.common.collect.Iterables;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -464,7 +465,7 @@ public class Preguntas extends ActionBarActivity {
 		Integer randomSegmentFalse;
 
 		Segments escogido1=null;
-
+		Iterables.all(segments,null);
 		do{
             while(escogido1==null || sigue){
                 System.out.println("dentro bucle 1");
