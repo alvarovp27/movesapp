@@ -264,7 +264,26 @@ public class Preguntas extends ActionBarActivity {
 			e.printStackTrace();
 		}
 
-		pregunta.setText("¿Dónde estuvo el día "+fechaInicio.toString()+" de "+fechaInicio.toString()+" hasta "+fechaFin.toString()+"?");
+		Calendar inicio = new GregorianCalendar();
+		inicio.setTime(fechaInicio);
+
+		Calendar fin = new GregorianCalendar();
+		fin.setTime(fechaFin);
+
+		//Comprobar las dos fechas
+
+		//Tratar cada parámetro por separado y convertirlos a cadena
+		//Añadir un método que calcule el nombre del día de la semana y mes
+
+		//Comprobar si la fecha fin es en un día distinto de la fecha inicio. En tal caso,
+		//indicar también el día fin
+
+		//Tener el detalle de poner ¿Dónde estuvo ayer...? si la fecha se corresponde a la de
+		//ayer, e ídem con el día de hoy
+
+		pregunta.setText("¿Dónde estuvo el día "+inicio.get(Calendar.DAY_OF_MONTH)+" de "+(inicio.get(Calendar.MONTH)+1)+
+				" desde las "+inicio.get(Calendar.HOUR_OF_DAY)+":"+inicio.get(Calendar.MINUTE)
+				+" hasta las "+fin.get(Calendar.HOUR_OF_DAY)+":"+fin.get(Calendar.MINUTE)+"?");
 		verdadero=actual.getPlace().getName();
 
         System.out.println("Voy a obtener los falsos:");
@@ -451,6 +470,10 @@ public class Preguntas extends ActionBarActivity {
             || actual.getPlace().getName().length()<2;
             }while(sigue);*/
 
+
+			/*Aquí puedo jugar con cosas como que muestre el mismo lugar de 1-5 veces como máxmo, aumentando
+			* la probabilidad cada vez que sale, y reducir la probabilidad de que aparezcan fechas muy lejanas en el tiempo.
+			* */
 			Segments actual = null;
 			do {
 				randomDay=aleatorio2(segments2.size()-1);
