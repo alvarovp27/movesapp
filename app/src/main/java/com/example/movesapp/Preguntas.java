@@ -44,7 +44,10 @@ import com.example.movesclass.Resultados;
 import com.example.movesclass.Segments;
 import com.example.movesclass.Usuarios;
 import com.google.common.base.Function;
+import com.google.common.base.Predicate;
+import com.google.common.collect.HashMultiset;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Multiset;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -54,6 +57,10 @@ import android.support.v7.app.ActionBarActivity;
 import static java.util.Random.*;
 
 public class Preguntas extends ActionBarActivity {
+
+	private final double SEMANAS_EN_MILISEG = 1.65343915*Math.pow(10,-9);
+	private Iterable<Segments> haceMenosDeUnMes;
+
 	private TextView pregunta;
 	private TextView tituloPreguntas;
 	private RadioButton r1,r2,r3;
@@ -326,7 +333,7 @@ public class Preguntas extends ActionBarActivity {
 		
 	}
 
-	public void compruebaChecked(){
+	private void compruebaChecked(){
 		// Se inserta en una lista la pregunta con la respuesta contestada
 		if(r1.isChecked()){
 			Resultados res = new Resultados(r1.getText().toString(),verdadero);
@@ -444,6 +451,8 @@ public class Preguntas extends ActionBarActivity {
 		Integer randomDay;
 		Integer randomSegment;
 
+
+
 		for(int i = 0;i<10;i++){
             /*System.out.println("Tamaño segments: "+segments.size());
             System.out.println("Índice al que apunta: "+randomDay);
@@ -493,27 +502,146 @@ public class Preguntas extends ActionBarActivity {
 
 		//Ordeno la lista de preguntas a mostrar de más recientes a más lejanas en el tiempo
 
-		Collections.sort(preguntasAMostrar,new comparadorPreguntas());
-	}
+		Collections.sort(preguntasAMostrar, new Comparator<Segments>() {
+			@Override
+			public int compare(Segments s1, Segments s2) {
+				Date fechaS1 = null;
+				Date fechaS2 = null;
+				try {
+					fechaS1 = new SimpleDateFormat("yyyyMMdd'T'HHmmssZ",Locale.FRANCE).parse(s1.getStartTime());
+					fechaS2 = new SimpleDateFormat("yyyyMMdd'T'HHmmssZ",Locale.FRANCE).parse(s2.getStartTime());
+				} catch (ParseException e) {
+					e.printStackTrace();
+				}
 
-	private class comparadorPreguntas implements Comparator<Segments>{
-		@Override
-		public int compare(Segments s1, Segments s2) {
-			Date fechaS1 = null;
-			Date fechaS2 = null;
-			try {
-				fechaS1 = new SimpleDateFormat("yyyyMMdd'T'HHmmssZ",Locale.FRANCE).parse(s1.getStartTime());
-				fechaS2 = new SimpleDateFormat("yyyyMMdd'T'HHmmssZ",Locale.FRANCE).parse(s2.getStartTime());
-			} catch (ParseException e) {
-				e.printStackTrace();
+				if(fechaS1 == null || fechaS2 == null)
+					return 0;
+				else
+					return fechaS2.compareTo(fechaS1);
 			}
-
-			if(fechaS1 == null || fechaS2 == null)
-				return 0;
-			else
-				return fechaS2.compareTo(fechaS1);
-		}
+		});
 	}
+
+	/**Probabilidad de aceptar un segmento en función del número de veces que haya
+	 * aparecido*/
+	private double funcionAceptacionRepeticion(int numApar){
+		double res =1.0;
+
+		Multiset<Segments> apariciones = HashMultiset.create();
+
+		for(Segments s:haceMenosDeUnMes)
+			apariciones.add(s);
+
+		//Calcular un número de probabilidad en función de la variedad de segmentos
+		//en el último mes
+
+		switch(numApar){
+			case 0:
+				res=1.0;
+				break;
+			case 1:
+				res=0.9;
+				break;
+			case 2:
+				res=0.7;
+				break;
+			case 3:
+				res=0.5;
+				break;
+			case 4:
+				res=0.3;
+				break;
+			case 5:
+				res=0.2;
+				break;
+			case 6:
+				res=0.1;
+				break;
+			default:
+				res=0.0;
+				break;
+		}
+		return res;
+	}
+
+	/**Probabilidad de aceptar un segmento en función de su fecha de inicio.*/
+	private double funcionAceptacionTemporal(Date fechaInicio){
+		double res = 1.0;
+		Calendar hoy = Calendar.getInstance();
+		Calendar fInicio = new GregorianCalendar();
+
+		fInicio.setTime(fechaInicio);
+
+		long miliseg = hoy.getTimeInMillis() - fInicio.getTimeInMillis();
+		double x = SEMANAS_EN_MILISEG * miliseg;
+
+		int semanas= (int) x;
+
+		switch(semanas){
+			case 0:
+				res=1.0;
+				break;
+			case 1:
+				res=0.95;
+				break;
+			case 2:
+				res=0.87;
+				break;
+			case 3:
+				res=0.83;
+				break;
+			case 4:
+				res = 0.75;
+				break;
+			default:
+				if(semanas>4 && semanas<=8) //Hace un mes
+					res = 0.4;
+				else if(semanas>8 && semanas<=12) //Hace dos meses
+					res = 0.25;
+				else if(semanas>12 && semanas<=16) //Hace tres meses
+					res=0.15;
+				else if(semanas>16 && semanas <=20) //Hace cuatro meses
+					res = 0.1;
+				else if(semanas>20 && semanas<=24) //hace cinco meses
+					res = 0.08;
+				else if(semanas>24) //El resto de la eternidad
+					res=0.05;
+				break;
+		}
+		return res;
+	}
+
+	/**Comprueba si la variedad de segmentos es la adecuada para jugar con las probabilidades
+	 * de aceptación*/
+	private boolean cumpleRequisitoLimiteLugares(List<Segments> ls){
+		haceMenosDeUnMes = Iterables.filter(ls, new Predicate<Segments>() {
+			@Override
+			public boolean apply(Segments segments) {
+				boolean res = false;
+				Calendar haceUnMes = Calendar.getInstance();
+				haceUnMes.add(Calendar.MONTH,-1);
+				Date segmentDate = new Date();
+
+				try {
+					segmentDate = new SimpleDateFormat("yyyyMMdd'T'HHmmssZ",Locale.FRANCE).parse(segments.getStartTime());
+				} catch (ParseException e) {
+					e.printStackTrace();
+				}
+
+				Calendar fechaSegmento = new GregorianCalendar();
+				fechaSegmento.setTime(segmentDate);
+
+				//Devuelve true si ocurrio antes de hace un mes
+				return fechaSegmento.after(haceUnMes);
+			}
+		});
+		return Iterables.size(haceMenosDeUnMes)>=10;
+	}
+
+
+
+
+
 
 	/**
 	 * Calcula las opciones falsas teniendo en cuenta la opción verdadera.
