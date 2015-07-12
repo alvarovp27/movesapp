@@ -2,10 +2,10 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/MovesApp1.iml" filepath="$PROJECT_DIR$/MovesApp1.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/guava-18.0/guava-18.0.iml" filepath="$PROJECT_DIR$/guava-18.0/guava-18.0.iml" />
+      <module fileurl="file://$PROJECT_DIR$/movesapp.iml" filepath="$PROJECT_DIR$/movesapp.iml" />
       <module fileurl="file://$PROJECT_DIR$/movesapp2.iml" filepath="$PROJECT_DIR$/movesapp2.iml" />
     </modules>
   </component>
 </project>
-

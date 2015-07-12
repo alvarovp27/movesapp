@@ -445,41 +445,18 @@ public class Preguntas extends ActionBarActivity {
 		System.out.println("Tamaño de la lista de segmentos: ******** "+segments2.size());
 
 		preguntasAMostrar = new ArrayList<>();
-		Map<String,Integer> contadorApariciones = new HashMap<>();
+		//Map<String,Integer> contadorApariciones = new HashMap<>();
 
-        boolean sigue = false;
+		Multiset<String> contadorApariciones = HashMultiset.create();
+
 		Integer randomDay;
 		Integer randomSegment;
 
-
+		boolean cumpleAceptacionTemporal = cumpleAceptacionTemporal(segments2);
+		boolean cumpleVariedadLugares = cumpleVariedadLugares();
+		boolean sigue = false;
 
 		for(int i = 0;i<10;i++){
-            /*System.out.println("Tamaño segments: "+segments.size());
-            System.out.println("Índice al que apunta: "+randomDay);
-            System.out.println("Tamaño listta de segmentos del día: "+segments.get(randomDay).getSegments().size());
-            System.out.println("Índice al que apunta: "+randomSegment);*/
-            /*Segments actual = null;
-            do{
-
-                while(actual==null || sigue){
-                    try{
-                        randomDay=aleatorio(0,segments,0,0);
-                        randomSegment=aleatorio(1,segments,randomDay,0);
-                        actual = segments.get(randomDay).getSegments().get(randomSegment);
-                        System.out.println("*************************"+actual.getPlace().getName());
-                        sigue=actual.getPlace().getName()==null;
-                    }catch(Exception e){
-                        e.getStackTrace();
-                    }
-                }
-                if(!contadorApariciones.containsKey(actual.getPlace().getName()))
-                    contadorApariciones.put(actual.getPlace().getName(),0);
-
-            sigue = preguntasAMostrar.contains(actual) || contadorApariciones.get(actual.getPlace().getName())>=3
-            || actual.getPlace().getName().length()<2;
-            }while(sigue);*/
-
-
 			/*Aquí puedo jugar con cosas como que muestre el mismo lugar de 1-5 veces como máxmo, aumentando
 			* la probabilidad cada vez que sale, y reducir la probabilidad de que aparezcan fechas muy lejanas en el tiempo.
 			* */
@@ -488,16 +465,38 @@ public class Preguntas extends ActionBarActivity {
 				randomDay=aleatorio2(segments2.size()-1);
 				System.out.println("Número aleatorio obtenido: "+randomDay);
 				actual = segments2.get(randomDay);
-				if(!contadorApariciones.containsKey(actual.getPlace().getName()))
-					contadorApariciones.put(actual.getPlace().getName(),0);
-			}while(contadorApariciones.get(actual.getPlace().getName())>3 || actual.getPlace().getName().length()<2
-					|| preguntasAMostrar.contains(actual));
+
+				double probabilidadAceptacion = generaDoubleAleatorio();
+
+				if(cumpleAceptacionTemporal){
+					double umbralAceptacionTemporal = funcionAceptacionTemporal(actual);
+					if(umbralAceptacionTemporal>=probabilidadAceptacion) {
+						sigue = false;
+						probabilidadAceptacion = generaDoubleAleatorio();
+						double umbralAceptacionVariedad =
+								funcionAceptacionRepeticion(contadorApariciones.count(actual.getPlace().getName()));
+						boolean trololol=umbralAceptacionVariedad >= probabilidadAceptacion;
+						if(cumpleVariedadLugares && umbralAceptacionVariedad >= probabilidadAceptacion){
+
+							System.out.println("CumpleVariedadLugares: "+trololol+", Valor prob - umbral: "+probabilidadAceptacion+"-"+umbralAceptacionVariedad);
+							sigue=false;
+						} else {
+							System.out.println("CumpleVariedadLugares: "+trololol+", Valor prob - umbral: "+probabilidadAceptacion+"-"+umbralAceptacionVariedad);
+							sigue = true;
+						}
+					} else {
+						sigue = true;
+					}
+				}
+
+			}while(actual.getPlace().getName().length()<2 || preguntasAMostrar.contains(actual) || sigue);
 
 			preguntasAMostrar.add(actual);
-			if(!contadorApariciones.containsKey(actual.getPlace().getName()))
+			contadorApariciones.add(actual.getPlace().getName());
+			/*if(!contadorApariciones.containsKey(actual.getPlace().getName()))
 				contadorApariciones.put(actual.getPlace().getName(),0);
 			else
-				contadorApariciones.put(actual.getPlace().getName(),contadorApariciones.get(actual.getPlace().getName())+1);
+				contadorApariciones.put(actual.getPlace().getName(),contadorApariciones.get(actual.getPlace().getName())+1);*/
 		}
 
 		//Ordeno la lista de preguntas a mostrar de más recientes a más lejanas en el tiempo
@@ -527,45 +526,47 @@ public class Preguntas extends ActionBarActivity {
 	private double funcionAceptacionRepeticion(int numApar){
 		double res =1.0;
 
-		Multiset<Segments> apariciones = HashMultiset.create();
-
-		for(Segments s:haceMenosDeUnMes)
-			apariciones.add(s);
-
-		//Calcular un número de probabilidad en función de la variedad de segmentos
-		//en el último mes
-
 		switch(numApar){
 			case 0:
 				res=1.0;
 				break;
 			case 1:
-				res=0.9;
-				break;
-			case 2:
 				res=0.7;
 				break;
-			case 3:
-				res=0.5;
+			case 2:
+				res=0.6;
 				break;
-			case 4:
+			case 3:
 				res=0.3;
 				break;
-			case 5:
+			case 4:
 				res=0.2;
 				break;
-			case 6:
+			case 5:
 				res=0.1;
+				break;
+			case 6:
+				res=0.05;
 				break;
 			default:
 				res=0.0;
 				break;
 		}
+
 		return res;
 	}
 
 	/**Probabilidad de aceptar un segmento en función de su fecha de inicio.*/
-	private double funcionAceptacionTemporal(Date fechaInicio){
+	private double funcionAceptacionTemporal(Segments segments){
+
+		Date fechaInicio = new Date();
+
+		try {
+			fechaInicio = new SimpleDateFormat("yyyyMMdd'T'HHmmssZ",Locale.FRANCE).parse(segments.getStartTime());
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+
 		double res = 1.0;
 		Calendar hoy = Calendar.getInstance();
 		Calendar fInicio = new GregorianCalendar();
@@ -582,38 +583,38 @@ public class Preguntas extends ActionBarActivity {
 				res=1.0;
 				break;
 			case 1:
-				res=0.95;
+				res=0.8;
 				break;
 			case 2:
-				res=0.87;
+				res=0.7;
 				break;
 			case 3:
-				res=0.83;
+				res=0.5;
 				break;
 			case 4:
-				res = 0.75;
+				res = 0.5;
 				break;
 			default:
 				if(semanas>4 && semanas<=8) //Hace un mes
-					res = 0.4;
+					res = 0.3;
 				else if(semanas>8 && semanas<=12) //Hace dos meses
-					res = 0.25;
+					res = 0.2;
 				else if(semanas>12 && semanas<=16) //Hace tres meses
 					res=0.15;
 				else if(semanas>16 && semanas <=20) //Hace cuatro meses
 					res = 0.1;
 				else if(semanas>20 && semanas<=24) //hace cinco meses
-					res = 0.08;
+					res = 0.05;
 				else if(semanas>24) //El resto de la eternidad
-					res=0.05;
+					res=0.01;
 				break;
 		}
 		return res;
 	}
 
-	/**Comprueba si la variedad de segmentos es la adecuada para jugar con las probabilidades
-	 * de aceptación*/
-	private boolean cumpleRequisitoLimiteLugares(List<Segments> ls){
+	/**Comprueba si la cantidad de segmentos en el último mes es adecuada para aplicar
+	 * la función de aceptación temporal */
+	private boolean cumpleAceptacionTemporal(List<Segments> ls){
 		haceMenosDeUnMes = Iterables.filter(ls, new Predicate<Segments>() {
 			@Override
 			public boolean apply(Segments segments) {
@@ -638,7 +639,44 @@ public class Preguntas extends ActionBarActivity {
 		return Iterables.size(haceMenosDeUnMes)>=10;
 	}
 
+	/** Comprueba si, en el último mes, existe una variedad de lugares visitados
+	 * lo suficientemente buena como para aplciar la función de aceptación por
+	 * repetición de lugar*/
+	private boolean cumpleVariedadLugares(){
+		boolean res = true;
 
+		Multiset<String> apariciones = HashMultiset.create();
+
+		Iterable<String> lugaresHaceMenosDeUnMes = Iterables.transform(haceMenosDeUnMes, new Function<Segments, String>() {
+			@Override
+			public String apply(Segments segments) {
+				return segments.getPlace().getName();
+			}
+		});
+
+		for(String s:lugaresHaceMenosDeUnMes)
+			apariciones.add(s);
+
+		int menosDeTresVeces = 0;
+		int masDeTresVeces = 0;
+		if(apariciones.elementSet().size()<10){
+			for(String s:apariciones){
+				if(apariciones.count(s)<=3){menosDeTresVeces++;}
+				if(apariciones.count(s)>3){masDeTresVeces++;}
+			}
+
+			if(menosDeTresVeces<4 && masDeTresVeces<4)
+					res = false;
+		}
+		return res;
+	}
+
+
+	private double generaDoubleAleatorio(){
+		int num = aleatorio2(101);
+		double doub = (double) num;
+		return doub/100.0;
+	}
 
 
 
@@ -710,6 +748,7 @@ public class Preguntas extends ActionBarActivity {
      * Función con la que obtenemos los lugares de la API de Moves
      * */
 
+	@Deprecated
 	public void getLugares(){
 		
 		do{
