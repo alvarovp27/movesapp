@@ -7,6 +7,15 @@ Cambios hechos por Álvaro Valencia (alvarovp27 en Git)
     * Que las vaya mostrando de más cercanas en el tiempo a más lejanas.
 * He cambiado la forma de cómo se van eligiendo las preguntas: ahora se eligen todas a la vez cuando se pulsa sobre comenzar el juego.
 
+Cambios en curso:
+* Mejora en el criterio de aleatoriedad de las preguntas:
+   * Que sean más cercanas en el tiempo.
+   * Controlar la repetición de lugares en las preguntas.
+* Elección de las opciones falsas:
+   * Que sean cercanas a la opción verdadera.
+   * Que los tramos horarios sean parecidos.
+* Mejorar el formato de la pregunta.
+
 Próximos cambios:
 
 * Añadir un nuevo tipo de preguntas: Que pregunte al usuario cuándo fue la última vez que estuvo en un determinado lugar.
