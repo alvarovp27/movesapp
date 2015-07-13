@@ -81,6 +81,7 @@ public class Preguntas extends ActionBarActivity {
 	private static ArrayList<Places> segments = new ArrayList<Places>();
     private Boolean actualizar;
 
+	private static List<String> enunciados = new ArrayList<>();
 	private static List<Segments> preguntasAMostrar = new ArrayList<>();
 	private static int punteroAPregunta=0;
 
@@ -120,6 +121,7 @@ public class Preguntas extends ActionBarActivity {
 
 					punteroAPregunta=0;
 					preguntasAMostrar=new ArrayList<Segments>();
+					enunciados = new ArrayList<String>();
 
 					String terminado = "";
 					terminado = new Gson().toJson(lista);
@@ -278,9 +280,32 @@ public class Preguntas extends ActionBarActivity {
 		fin.setTime(fechaFin);
 
 		//Comprobar las dos fechas
+		int diaInicio = inicio.get(Calendar.DAY_OF_YEAR);
+		int diaFin = fin.get(Calendar.DAY_OF_YEAR);
+		boolean fechaFinDiaSiguiente = false;
+		boolean fechaFinOtroDia = false;
+		if(diaFin-diaInicio==1){fechaFinDiaSiguiente=true;}
+		if(diaFin-diaInicio>1){fechaFinOtroDia=true;}
+
+		Calendar hoy = Calendar.getInstance();
+		int diaHoy = hoy.get(Calendar.DAY_OF_YEAR);
+		boolean empiezaHoy = false;
+		boolean empezoAyer = false;
+		boolean empezoAnteAyer = false;
+		if(diaHoy-diaInicio == 0){empiezaHoy=true;}
+		if(diaHoy-diaInicio == 1){empezoAyer=true;}
+		if(diaHoy-diaInicio == 2){empezoAnteAyer=true;}
+
 
 		//Tratar cada parámetro por separado y convertirlos a cadena
 		//Añadir un método que calcule el nombre del día de la semana y mes
+		String diaSemInicio = getDiaSemana(inicio);
+		String diaSemFin = getDiaSemana(fin);
+		String mesInicio = getMes(inicio);
+		String mesFin = getMes(fin);
+		String horaInicio = getHora(inicio);
+		String horaFin = getHora(fin);
+
 
 		//Comprobar si la fecha fin es en un día distinto de la fecha inicio. En tal caso,
 		//indicar también el día fin
@@ -288,9 +313,33 @@ public class Preguntas extends ActionBarActivity {
 		//Tener el detalle de poner ¿Dónde estuvo ayer...? si la fecha se corresponde a la de
 		//ayer, e ídem con el día de hoy
 
-		pregunta.setText("¿Dónde estuvo el día "+inicio.get(Calendar.DAY_OF_MONTH)+" de "+(inicio.get(Calendar.MONTH)+1)+
+		String preg = "";
+
+		if(empiezaHoy)
+			preg+="¿Dónde ha estado hoy desde las "+horaInicio+" hasta las "+horaFin+" ";
+		else if(empezoAyer)
+			preg+="¿Dónde estuvo ayer desde las "+horaInicio+" hasta las "+horaFin+" ";
+		else if (empezoAnteAyer)
+			preg+="¿Dónde estuvo antes de ayer desde las "+horaInicio+" hasta las "+horaFin+" ";
+		else
+			preg +="¿Dónde estuvo el "+diaSemInicio+", "+inicio.get(Calendar.DAY_OF_MONTH)+
+					" de "+mesInicio+" desde las "+horaInicio+" hasta las "+horaFin+" ";
+
+		if(fechaFinDiaSiguiente)
+			preg+="del día siguiente?";
+		else if (fechaFinOtroDia)
+			preg+="del "+diaSemFin+", "+fin.get(Calendar.DAY_OF_MONTH)+
+					" de "+mesFin+"?";
+		else
+			preg+="?";
+
+
+
+		/*pregunta.setText("¿Dónde estuvo el día "+inicio.get(Calendar.DAY_OF_MONTH)+" de "+(inicio.get(Calendar.MONTH)+1)+
 				" desde las "+inicio.get(Calendar.HOUR_OF_DAY)+":"+inicio.get(Calendar.MINUTE)
-				+" hasta las "+fin.get(Calendar.HOUR_OF_DAY)+":"+fin.get(Calendar.MINUTE)+"?");
+				+" hasta las "+fin.get(Calendar.HOUR_OF_DAY)+":"+fin.get(Calendar.MINUTE)+"?");*/
+		pregunta.setText(preg);
+		enunciados.add(preg);
 		verdadero=actual.getPlace().getName();
 
         System.out.println("Voy a obtener los falsos:");
@@ -390,38 +439,6 @@ public class Preguntas extends ActionBarActivity {
 		Random r = new Random();
 		return r.nextInt(limSup+1);
 	}
-	
-	public static String getDiaSemana(Date d){
-		GregorianCalendar cal = new GregorianCalendar();
-		cal.setTime(d);
-		String dia = ""; 
-		switch(cal.get(Calendar.DAY_OF_WEEK)){
-		case 1:
-			dia = "(Domingo)";
-			break;
-		case 2:
-			dia = "(Lunes)";
-			break;
-		case 3:
-			dia = "(Martes)";
-			break;
-		case 4:
-			dia = "(Miercoles)";
-			break;
-		case 5:
-			dia = "(Jueves)";
-			break;
-		case 6:
-			dia = "(Viernes)";
-			break;
-		case 7:
-			dia = "(Sabado)";
-			break;
-		
-		}
-		return dia;
-	}
-
 
 	public void cargaPreguntas(){
 		Iterable<List<Segments>> aux = Iterables.transform(segments, new Function<Places, List<Segments>>() {
@@ -808,47 +825,150 @@ public class Preguntas extends ActionBarActivity {
     /**
      * Función para convertir un mes en dato numérico tal y como lo realizar Moves. P.e. Enero = 01
      * */
-    public String convierteMes(String mes){
+    private String getMes(Calendar date){
+		int mes = date.get(Calendar.MONTH);
         String res = "";
         switch (mes){
-            case "0":
-                res = "01";
+            case 0:
+                res = "enero";
                 break;
-            case "1":
-                res = "02";
+            case 1:
+                res = "febrero";
                 break;
-            case "2":
-                res = "03";
+            case 2:
+                res = "marzo";
                 break;
-            case "3":
-                res = "04";
+            case 3:
+                res = "abril";
                 break;
-            case "4":
-                res = "05";
+            case 4:
+                res = "mayo";
                 break;
-            case "5":
-                res = "06";
+            case 5:
+                res = "junio";
                 break;
-            case "6":
-                res = "07";
+            case 6:
+                res = "julio";
                 break;
-            case "7":
-                res = "08";
+            case 7:
+                res = "agosto";
                 break;
-            case "8":
-                res = "09";
+            case 8:
+                res = "septiembre";
                 break;
-            case "9":
-                res = "10";
+            case 9:
+                res = "octubre";
                 break;
-            case "10":
-                res = "11";
+            case 10:
+                res = "noviembre";
                 break;
-            case "11":
-                res = "12";
+            case 11:
+                res = "diciembre";
                 break;
 
         }
         return res;
     }
+
+	private String getDiaSemana(Calendar cal){
+		String dia = "";
+		switch(cal.get(Calendar.DAY_OF_WEEK)){
+			case 1:
+				dia = "domingo";
+				break;
+			case 2:
+				dia = "lunes";
+				break;
+			case 3:
+				dia = "martes";
+				break;
+			case 4:
+				dia = "miércoles";
+				break;
+			case 5:
+				dia = "jueves";
+				break;
+			case 6:
+				dia = "viernes";
+				break;
+			case 7:
+				dia = "sábado";
+				break;
+
+		}
+		return dia;
+	}
+
+	/**
+	 * Devuelve un String que representa la hora de la fecha que recibe como
+	 * parámetro.
+	 * */
+	private String getHora(Calendar date){
+		String res = "";
+
+		int horas = date.get(Calendar.HOUR_OF_DAY);
+		if(horas<10)
+			res+="0"+horas;
+		else
+			res+=horas;
+
+		int minutos = date.get(Calendar.MINUTE);
+		if(minutos<10)
+			res+=":0"+minutos;
+		else
+			res+=":"+minutos;
+
+		return res;
+	}
+
+
+
+	/**
+	 * Método necesario para hacer una llamada a la API
+	 * */
+	private String convierteMes(String mes){
+		String res = "";
+		switch (mes){
+			case "0":
+				res = "01";
+				break;
+			case "1":
+				res = "02";
+				break;
+			case "2":
+				res = "03";
+				break;
+			case "3":
+				res = "04";
+				break;
+			case "4":
+				res = "05";
+				break;
+			case "5":
+				res = "06";
+				break;
+			case "6":
+				res = "07";
+				break;
+			case "7":
+				res = "08";
+				break;
+			case "8":
+				res = "09";
+				break;
+			case "9":
+				res = "10";
+				break;
+			case "10":
+				res = "11";
+				break;
+			case "11":
+				res = "12";
+				break;
+
+		}
+		return res;
+	}
+
+
 }

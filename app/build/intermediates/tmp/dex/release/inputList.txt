@@ -4,3 +4,4 @@ C:\Users\Alvaro\Android_WS\movesapp\app\build\intermediates\pre-dexed\release\gs
 C:\Users\Alvaro\Android_WS\movesapp\app\build\intermediates\pre-dexed\release\internal_impl-21.0.3-53d607b38cd4550b0c8eb78047e0bab4817a4aa8.jar
 C:\Users\Alvaro\Android_WS\movesapp\app\build\intermediates\pre-dexed\release\classes-cc2dde3db972fb218751c2271aed2bd54f728136.jar
 C:\Users\Alvaro\Android_WS\movesapp\app\build\intermediates\pre-dexed\release\classes-f066199e5e2b52306f472a2ec9308fefb145610e.jar
+C:\Users\Alvaro\Android_WS\movesapp\app\build\intermediates\pre-dexed\release\guava-18.0-e4fe1c1d25763d062576c58b9e9601773159f7f9.jar
