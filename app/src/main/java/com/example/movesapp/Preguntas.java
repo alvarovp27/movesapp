@@ -85,6 +85,13 @@ public class Preguntas extends ActionBarActivity {
 	private static List<Segments> preguntasAMostrar = new ArrayList<>();
 	private static int punteroAPregunta=0;
 
+	private static List<Segments> sextoMes = new ArrayList<>();
+	private static List<Segments> quintoMes = new ArrayList<>();
+	private static List<Segments> cuartoMes = new ArrayList<>();
+	private static List<Segments> terceroMes = new ArrayList<>();
+	private static List<Segments> segundoMes = new ArrayList<>();
+	private static List<Segments> primerMes = new ArrayList<>();
+
 	@Override
 	public void onBackPressed(){
 		contadorAtras++;
@@ -121,6 +128,14 @@ public class Preguntas extends ActionBarActivity {
 
 					punteroAPregunta=0;
 					preguntasAMostrar=new ArrayList<Segments>();
+
+					sextoMes = new ArrayList<>();
+					quintoMes = new ArrayList<>();
+					cuartoMes = new ArrayList<>();
+					terceroMes = new ArrayList<>();
+					segundoMes = new ArrayList<>();
+					primerMes = new ArrayList<>();
+
 					enunciados = new ArrayList<String>();
 
 					String terminado = "";
@@ -448,73 +463,115 @@ public class Preguntas extends ActionBarActivity {
 			}
 		});
 
-		List<Segments> segments2 = new ArrayList<>();
+		//List<Segments> segments2 = new ArrayList<>();
 		for(List<Segments> ls : aux){
 			try{
 				for(Segments s:ls){
-					if(s.getPlace().getName()!=null)
-						segments2.add(s);
+					if(s.getPlace().getName()!=null){
+						Calendar seisMeses = Calendar.getInstance();
+						Calendar cincoMeses = Calendar.getInstance();
+						Calendar cuatroMeses = Calendar.getInstance();
+						Calendar tresMeses = Calendar.getInstance();
+						Calendar dosMeses = Calendar.getInstance();
+						Calendar unMes = Calendar.getInstance();
+						Calendar hoy = Calendar.getInstance();
+
+						seisMeses.add(Calendar.MONTH,-6);
+						cincoMeses.add(Calendar.MONTH,-5);
+						cuatroMeses.add(Calendar.MONTH,-4);
+						tresMeses.add(Calendar.MONTH,-3);
+						dosMeses.add(Calendar.MONTH,-2);
+						unMes.add(Calendar.MONTH,-1);
+
+						Date st = new Date();
+
+						try {
+							st = new SimpleDateFormat("yyyyMMdd'T'HHmmssZ",Locale.FRANCE).parse(s.getStartTime());
+						} catch (ParseException e) {
+							e.printStackTrace();
+						}
+
+						Calendar startTime = new GregorianCalendar();
+						startTime.setTime(st);
+
+						if(startTime.after(seisMeses) && startTime.before(cincoMeses))
+							sextoMes.add(s);
+						else if(startTime.after(cincoMeses) && startTime.before(cuatroMeses))
+							quintoMes.add(s);
+						else if(startTime.after(cuatroMeses) && startTime.before(tresMeses))
+							cuartoMes.add(s);
+						else if(startTime.after(tresMeses) && startTime.before(dosMeses))
+							terceroMes.add(s);
+						else if(startTime.after(dosMeses) && startTime.before(unMes))
+							segundoMes.add(s);
+						else if(startTime.after(unMes) && startTime.before(hoy))
+							primerMes.add(s);
+					}
 				}
 			} catch(Exception e){
 				e.getStackTrace();
 			}
 		}
-		System.out.println("Tamaño de la lista de segmentos: ******** "+segments2.size());
 
-		preguntasAMostrar = new ArrayList<>();
+		for(int i = 0; i<10; i++){
+
+			Segments actual = null;
+			do{
+				System.out.println("Estoy iterando");
+
+				int mes = mesAElegir();
+				System.out.println("Mes elejido "+mes);
+				int random;
+
+				try{
+					switch(mes){
+						case 1:
+							random = aleatorio2(primerMes.size());
+							actual = primerMes.get(random);
+							System.out.println("Primer mes ******************* ");
+							break;
+						case 2:
+							random = aleatorio2(segundoMes.size());
+							actual = segundoMes.get(random);
+							System.out.println("Sgdo mes ******************* ");
+							break;
+						case 3:
+							random = aleatorio2(terceroMes.size());
+							actual = terceroMes.get(random);
+							System.out.println("Tercer mes ******************* ");
+							break;
+						case 4:
+							random = aleatorio2(cuartoMes.size());
+							actual = cuartoMes.get(random);
+							break;
+						case 5:
+							random = aleatorio2(quintoMes.size());
+							actual = quintoMes.get(random);
+							break;
+						case 6:
+							random = aleatorio2(sextoMes.size());
+							actual = sextoMes.get(random);
+							break;
+						default:
+							random = aleatorio2(primerMes.size());
+							actual = primerMes.get(random);
+							break;
+					}
+				}catch(Exception e) {
+					e.getStackTrace();
+				}
+			}while(actual == null || preguntasAMostrar.contains(actual));
+
+			preguntasAMostrar.add(actual);
+		}
+
+		//System.out.println("Tamaño de la lista de segmentos: ******** "+segments2.size());
+
+		//preguntasAMostrar = new ArrayList<>();
 		//Map<String,Integer> contadorApariciones = new HashMap<>();
 
 		Multiset<String> contadorApariciones = HashMultiset.create();
 
-		Integer randomDay;
-		Integer randomSegment;
-
-		boolean cumpleAceptacionTemporal = cumpleAceptacionTemporal(segments2);
-		boolean cumpleVariedadLugares = cumpleVariedadLugares();
-		boolean sigue = false;
-
-		for(int i = 0;i<10;i++){
-			/*Aquí puedo jugar con cosas como que muestre el mismo lugar de 1-5 veces como máxmo, aumentando
-			* la probabilidad cada vez que sale, y reducir la probabilidad de que aparezcan fechas muy lejanas en el tiempo.
-			* */
-			Segments actual = null;
-			do {
-				randomDay=aleatorio2(segments2.size()-1);
-				System.out.println("Número aleatorio obtenido: "+randomDay);
-				actual = segments2.get(randomDay);
-
-				double probabilidadAceptacion = generaDoubleAleatorio();
-
-				if(cumpleAceptacionTemporal){
-					double umbralAceptacionTemporal = funcionAceptacionTemporal(actual);
-					if(umbralAceptacionTemporal>=probabilidadAceptacion) {
-						sigue = false;
-						probabilidadAceptacion = generaDoubleAleatorio();
-						double umbralAceptacionVariedad =
-								funcionAceptacionRepeticion(contadorApariciones.count(actual.getPlace().getName()));
-						boolean trololol=umbralAceptacionVariedad >= probabilidadAceptacion;
-						if(cumpleVariedadLugares && umbralAceptacionVariedad >= probabilidadAceptacion){
-
-							System.out.println("CumpleVariedadLugares: "+trololol+", Valor prob - umbral: "+probabilidadAceptacion+"-"+umbralAceptacionVariedad);
-							sigue=false;
-						} else {
-							System.out.println("CumpleVariedadLugares: "+trololol+", Valor prob - umbral: "+probabilidadAceptacion+"-"+umbralAceptacionVariedad);
-							sigue = true;
-						}
-					} else {
-						sigue = true;
-					}
-				}
-
-			}while(actual.getPlace().getName().length()<2 || preguntasAMostrar.contains(actual) || sigue);
-
-			preguntasAMostrar.add(actual);
-			contadorApariciones.add(actual.getPlace().getName());
-			/*if(!contadorApariciones.containsKey(actual.getPlace().getName()))
-				contadorApariciones.put(actual.getPlace().getName(),0);
-			else
-				contadorApariciones.put(actual.getPlace().getName(),contadorApariciones.get(actual.getPlace().getName())+1);*/
-		}
 
 		//Ordeno la lista de preguntas a mostrar de más recientes a más lejanas en el tiempo
 
@@ -537,6 +594,28 @@ public class Preguntas extends ActionBarActivity {
 			}
 		});
 	}
+
+	private int mesAElegir(){
+		int res = 1;
+
+		double random = generaDoubleAleatorio();
+
+		System.out.println("El numero "+random+" ha tenido suerte**************");
+
+		if(random<=0.07)
+			res=6;
+		else if (random<=0.12)
+			res=5;
+		else if(random<=0.17)
+			res=4;
+		else if(random<=0.22)
+			res=3;
+		else if (random<=0.27)
+			res=2;
+
+		return res;
+	}
+
 
 	/**Probabilidad de aceptar un segmento en función del número de veces que haya
 	 * aparecido*/
