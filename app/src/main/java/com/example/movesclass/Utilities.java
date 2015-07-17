@@ -3,11 +3,23 @@ package com.example.movesclass;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.Random;
 
 /**
  * Created by Manuel on 15/1/15.
  */
 public class Utilities {
+
+    public static int generaIntAleatorio(int limSup){
+        Random r = new Random();
+        return r.nextInt(limSup+1);
+    }
+
+    public static double generaDoubleAleatorio(){
+        int num = generaIntAleatorio(101);
+        double doub = (double) num;
+        return doub/100.0;
+    }
 
     public int restaFecha(int fecha){
         if(fecha%100 == 1) {

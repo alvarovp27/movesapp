@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Random;
+import java.util.concurrent.ExecutionException;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -28,9 +29,13 @@ import org.apache.http.util.EntityUtils;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.CancellationSignal;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -91,6 +96,10 @@ public class Preguntas extends ActionBarActivity {
 	private static List<Segments> terceroMes = new ArrayList<>();
 	private static List<Segments> segundoMes = new ArrayList<>();
 	private static List<Segments> primerMes = new ArrayList<>();
+
+	private ProgressDialog pdialog= null;
+
+	private CargaPreguntasAsync cpa= new CargaPreguntasAsync();
 
 	@Override
 	public void onBackPressed(){
@@ -266,8 +275,25 @@ public class Preguntas extends ActionBarActivity {
 		//Obtenemos los lugares
 
 		if(preguntasAMostrar.isEmpty()){
-            cargaPreguntas();
-            System.out.println("Acabo de cargar las preguntas");
+
+			pdialog = new ProgressDialog(Preguntas.this);
+			pdialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+			pdialog.setMessage("Procesando...");
+			pdialog.setCancelable(true);
+			pdialog.setMax(100);
+
+            cpa = new CargaPreguntasAsync();
+
+			try {
+				preguntasAMostrar=cpa.execute().get();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			} catch (ExecutionException e) {
+				e.printStackTrace();
+			}
+
+
+			System.out.println("Acabo de cargar las preguntas");
         }else{
             System.out.println("¡Paso de cargar preguntas!");
         }
@@ -455,7 +481,13 @@ public class Preguntas extends ActionBarActivity {
 		return r.nextInt(limSup+1);
 	}
 
-	public void cargaPreguntas(){
+	public List<Segments> cargaPreguntas(){
+		/*try {
+			Thread.sleep(10000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}*/
+		List<Segments> res = new ArrayList<>();
 		Iterable<List<Segments>> aux = Iterables.transform(segments, new Function<Places, List<Segments>>() {
 			@Override
 			public List<Segments> apply(Places places) {
@@ -515,6 +547,11 @@ public class Preguntas extends ActionBarActivity {
 
 		for(int i = 0; i<10; i++){
 
+
+
+			cpa.onProgressUpdate((i+1)*100);
+
+
 			Segments actual = null;
 			do{
 				System.out.println("Estoy iterando");
@@ -560,14 +597,14 @@ public class Preguntas extends ActionBarActivity {
 				}catch(Exception e) {
 					e.getStackTrace();
 				}
-			}while(actual == null || preguntasAMostrar.contains(actual));
+			}while(actual == null || res.contains(actual));
 
-			preguntasAMostrar.add(actual);
+			res.add(actual);
 		}
 
 		//System.out.println("Tamaño de la lista de segmentos: ******** "+segments2.size());
 
-		//preguntasAMostrar = new ArrayList<>();
+		//res = new ArrayList<>();
 		//Map<String,Integer> contadorApariciones = new HashMap<>();
 
 		Multiset<String> contadorApariciones = HashMultiset.create();
@@ -575,24 +612,58 @@ public class Preguntas extends ActionBarActivity {
 
 		//Ordeno la lista de preguntas a mostrar de más recientes a más lejanas en el tiempo
 
-		Collections.sort(preguntasAMostrar, new Comparator<Segments>() {
+		Collections.sort(res, new Comparator<Segments>() {
 			@Override
 			public int compare(Segments s1, Segments s2) {
 				Date fechaS1 = null;
 				Date fechaS2 = null;
 				try {
-					fechaS1 = new SimpleDateFormat("yyyyMMdd'T'HHmmssZ",Locale.FRANCE).parse(s1.getStartTime());
-					fechaS2 = new SimpleDateFormat("yyyyMMdd'T'HHmmssZ",Locale.FRANCE).parse(s2.getStartTime());
+					fechaS1 = new SimpleDateFormat("yyyyMMdd'T'HHmmssZ", Locale.FRANCE).parse(s1.getStartTime());
+					fechaS2 = new SimpleDateFormat("yyyyMMdd'T'HHmmssZ", Locale.FRANCE).parse(s2.getStartTime());
 				} catch (ParseException e) {
 					e.printStackTrace();
 				}
 
-				if(fechaS1 == null || fechaS2 == null)
+				if (fechaS1 == null || fechaS2 == null)
 					return 0;
 				else
 					return fechaS2.compareTo(fechaS1);
 			}
 		});
+		return res;
+	}
+
+	private class CargaPreguntasAsync extends AsyncTask<Void, Integer,List<Segments>>{
+
+		@Override
+		protected List<Segments> doInBackground(Void... params) {
+			System.out.println("ESTOY DENTRO DEL HILO!!!!!**********************************");
+
+			List<Segments> res = cargaPreguntas();
+
+			pdialog.dismiss();
+
+			return res;
+		}
+
+		protected void onProgressUpdate(Integer... values) {
+			int progreso = values[0].intValue();
+
+			pdialog.setProgress(progreso);
+		}
+
+
+		@Override
+		protected void onPreExecute() {
+			pdialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+				@Override
+				public void onCancel(DialogInterface dialog) {
+					CargaPreguntasAsync.this.cancel(true);
+				}
+			});
+			pdialog.setProgress(0);
+			pdialog.show();
+		}
 	}
 
 	private int mesAElegir(){
