@@ -210,10 +210,18 @@ public class Preguntas extends ActionBarActivity {
                     //  Log.d("JSON2",cadenaNueva2);
                 } catch (Exception e) {
                     Toast.makeText(this, "Ocurrio un error llamando a la API: " + e.toString(), Toast.LENGTH_LONG).show();
+					System.out.println("Error llamando a la API: " + e.toString());
                     //pregunta.setText(e.toString());
                 }
+				System.out.println("Resultado de la llamada a la API: "+recorre);
 
-                String error = recorre.substring(2, 7);
+				String error="";
+				try{
+					error = recorre.substring(2, 7);
+				} catch(Exception e){
+					e.printStackTrace();
+				}
+
                 Log.d("Cadena error", error);
                 if (error.equals("error") || recorre == "" || cont == 5) { //Solamente cuenta 5 meses
                     cent = false;
